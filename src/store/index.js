@@ -5,7 +5,7 @@ import VueAxios from "vue-axios";
 
 Vue.use(Vuex, VueAxios, axios);
 
-const serverUrl = "http://localhost:9090";
+const serverUrl = "https://chaleurback.herokuapp.com";
 
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {

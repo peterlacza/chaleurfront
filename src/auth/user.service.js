@@ -14,7 +14,7 @@ function login(username, password) {
         headers: {'Authorization': 'Basic ' + window.btoa(username + ':' + password)}
     };
 
-    return fetch(`http://localhost:9090/auth/login`, requestOptions)
+    return fetch(`https://chaleurback.herokuapp.com/auth/login`, requestOptions)
         .then(handleResponse)
         .then(user => {
             if (user) {
@@ -37,7 +37,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch(`http://localhost:9090/auth/login`, requestOptions).then(handleResponse);
+    return fetch(`https://chaleurback.herokuapp.com/auth/login`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {
