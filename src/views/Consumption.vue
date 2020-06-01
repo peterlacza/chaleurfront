@@ -29,7 +29,7 @@
                                         <a :href="getRecipeHref(consumption.recipe)" class="noLink">
                                             <img v-if="consumption.recipe.picture"
                                                  style="max-height: 128px"
-                                                 v-bind:src="'data:image/png;base64,'+user.avatar.picByte" />
+                                                 v-bind:src="'data:image/png;base64,'+consumption.recipe.picture.picByte" />
                                             <img v-else
                                                  src="http://laczapeter95.web.elte.hu/kepek/recipe.png" />
                                         </a>
@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="column is-narrow">
                                     <p class="title is-4" style="padding: 0px!important; margin: 0px!important;">
-                                        {{ consumption.recipe.name }}
+                                        <span class="recipeName"> {{ consumption.recipe.name }} </span>
                                         <i class="deleteIcon" @click="deleteConsumption(consumption)" style="font-weight: lighter;">(x)</i>
                                     </p>
                                     <div class="columns is-multiline is-mobile">
@@ -118,7 +118,7 @@
                 this.changedRate = true;
             },
             rateSuccessful() {
-                console.log("megvagyunk! ");
+                console.log("Sikeres értékelés! ");
             },
             nutrientValues(){
                 this.setChartData();
@@ -218,10 +218,8 @@
             calcNutriRef(nutrientCode){
                 let myNutri = this.nutrientReference.find(nutrient => nutrient.nutrientCode === nutrientCode);
                 if(myNutri){
-                    //console.log("Nutri code: ["+nutrientCode+"] | Nutri value: ["+myNutri.dailyRecommend+"]");
                     return myNutri.dailyRecommend;
                 } else{
-                    //console.log("Nutri code: ["+nutrientCode+"] | Nutri value: ["+myNutri+"]");
                     return 100;
                 }
             },
@@ -342,15 +340,10 @@
             background-color: rgba(213, 224, 224, 0.6);
         }
     }
-    /*
-    .rateRecipe{
-        background-color: rgba(182, 155, 155, 0.63);
-        max-width: 200px;
-        border-radius: 5px;
-        padding: 5px;
-        margin-top: 5px;
+    .recipeName{
+        text-transform: lowercase;
     }
-    */
+
     .progessBar{
         min-width: 80px;
     }

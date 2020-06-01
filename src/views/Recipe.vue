@@ -29,7 +29,7 @@
                             <article class="tile is-child notification ">
                                 <figure class="image is-4by3">
                                     <img v-if="recipe.picture" v-bind:src="'data:image/png;base64,'+recipe.picture.picByte" />
-                                    <img v-else src="http://laczapeter95.web.elte.hu/kepek/recipe.png" />
+                                    <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish4.png" />
                                 </figure>
                                 <br>
                                 <div class="columns">
@@ -110,7 +110,7 @@
                                             <div class="column is-2">
                                                 <a :href="getRecipeHref(recipe.id)" style="text-decoration:none">
                                                     <img v-if="recipe.picture" v-bind:src="'data:image/png;base64,'+recipe.picture.picByte" />
-                                                    <img v-else src="http://laczapeter95.web.elte.hu/kepek/recipe.png" />
+                                                    <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish2.png" />
                                                 </a>
                                                 <div class="rate">
                                                     {{getRecipeRate(recipeIndex, recipe.id)}}
@@ -237,7 +237,7 @@
                             recipeUnit: this.selectedUnit
                         };
                         this.$store.dispatch("consumeRecipe", obj);
-                        this.$router.push("/consumptions")
+                        this.$router.go();
                     } else{
                         this.$router.push("/login");
                     }
@@ -291,7 +291,7 @@
             addFavourite(recipe){
                 if(localStorage.getItem("user")){
                     this.$store.dispatch("addFavourite", recipe.id);
-                    this.$router.go()
+                    this.$router.go();
                 } else{
                     this.favError();
                 }

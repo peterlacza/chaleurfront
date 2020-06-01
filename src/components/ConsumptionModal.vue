@@ -5,9 +5,9 @@
                 <p class="modal-card-title">Nutrients</p>
             </header>
             <section class="modal-card-body">
-
                 <p class="title"> {{recipe.name}} </p>
-                <img class="image" v-bind:src="'http://laczapeter95.web.elte.hu/kepek/consumption.png'"/>
+                <img v-if="recipe.picture" v-bind:src="'data:image/png;base64,'+recipe.picture.picByte" />
+                <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish2.png" />
                 <div class="column is-mobile is-6">
                     <div v-for="(nutrient, index) in recipe.nutrientValues" v-bind:key="index">
                         <p class="nutrientName">{{ nutrient.nutrient.name }}</p>
@@ -18,8 +18,6 @@
                         </p>
                     </div>
                 </div>
-
-
             </section>
             <footer class="modal-card-foot">
                 <button class="button" type="button" @click="$parent.close()">Close</button>
@@ -36,7 +34,6 @@
             recipe : null
         },
         computed:{
-
             nutrientReference(){
                 return this.$store.getters.nutrientReference;
             },

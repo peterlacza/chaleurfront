@@ -1,6 +1,6 @@
 <template>
     <section>
-        <div class="container has-text-centered">
+        <div class="container has-text-centered" v-if="actProfile.username !== 'peterlacza'">
             <div class="profilePic">
                 <figure class="image is-128x128">
                     <img class="is-rounded" v-if="actProfile.username == actUser.username && actUser.avatar" v-bind:src="'data:image/png;base64,'+actUser.avatar.picByte" />
@@ -59,7 +59,8 @@
                         <div class="columns" v-for="(recipe, index) in userFavourites" :key="index">
                             <div class="column">
                                 <figure class="image is-128x128">
-                                    <img src="http://laczapeter95.web.elte.hu/kepek/recipe.png" />
+                                    <img v-if="recipe.picture" v-bind:src="'data:image/png;base64,'+recipe.picture.picByte" />
+                                    <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish2.png" />
                                 </figure>
                             </div>
                             <div class="column">
@@ -76,6 +77,9 @@
                     </b-tab-item>
                 </b-tabs>
             </div>
+        </div>
+        <div v-else>
+            <p class="title" style="text-align: center; background-color: dimgray; color:red; margin: 150px"> Admin profile, disable for public. </p>
         </div>
     </section>
 </template>
@@ -151,11 +155,14 @@
             }
         },
         mounted() {
-            this.$store.dispatch("getUserRecipes", this.userName);
             this.$store.dispatch("getUserProfile", this.userName);
-            this.$store.dispatch("getFollowings");
-            this.$store.dispatch("getFollowers", this.userName);
-            this.$store.dispatch("getFavourites", this.userName);
+
+            if(this.userName !== 'peterlacza'){
+                this.$store.dispatch("getUserRecipes", this.userName);
+                this.$store.dispatch("getFollowings");
+                this.$store.dispatch("getFollowers", this.userName);
+                this.$store.dispatch("getFavourites", this.userName);
+            }
         },
         props:{
             userName: String
@@ -183,12 +190,6 @@
     }
     i.deleteIcon{
         color: red;
-    }
-
-    .profilePic{
-        height: 150px;
-        width: 150px;
-        margin: 0 auto 20px;
     }
 
 

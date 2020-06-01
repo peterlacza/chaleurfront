@@ -10,7 +10,7 @@
                             </b-field>
 
                             <b-field class="uploadIcon">
-                                <b-upload v-model="file">
+                                <b-upload v-model="file" accept='image/*'>
                                     <a :class="!file ? 'button is-dark is-outlined' : 'button is-success is-outlined'">
                                         <b-icon v-if="!file" icon="upload"></b-icon>
                                         <b-icon v-else icon="image"></b-icon>
@@ -54,8 +54,8 @@
                                 </b-field>
                                 <b-field label="Gender" label-position="on-border" >
                                     <b-select v-model="gender">
-                                        <option value="male"> Male </option>
-                                        <option value="female"> Female </option>
+                                        <option value="Male"> Male </option>
+                                        <option value="Female"> Female </option>
                                     </b-select>
 
                                 </b-field>
@@ -64,7 +64,7 @@
                                         <option value="1.4"> Light </option>
                                         <option value="1.6"> Moderate </option>
                                         <option value="1.8"> Active </option>
-                                        <option value="2.0"> Very active </option>
+                                        <option value="2"> Very active </option>
                                     </b-select>
                                 </b-field>
                             </b-field>

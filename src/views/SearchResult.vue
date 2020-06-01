@@ -9,7 +9,7 @@
                         <div class="card-image">
                             <a :href="getRecipeHref(recipe)">
                                 <img v-if="recipe.picture" v-bind:src="'data:image/png;base64,'+recipe.picture.picByte" />
-                                <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish.jpg" />
+                                <img v-else src="http://laczapeter95.web.elte.hu/kepek/dish4.png" />
                                 <p class="subtitle recipeName">
                                     {{ recipe.name }}
                                 </p>
@@ -72,7 +72,7 @@
                 return returnDate.toLocaleDateString();
             },
             descriptionCut(description){
-                return description.substr(0,80).concat('...');
+                return description.substr(0,60).concat('...');
             },
             getSearchResult(){
                 if(this.searchValue.length > 3){
@@ -124,6 +124,12 @@
 
     p.title{
         padding-left: 50px;
+    }
+
+    p.subtitle.recipeName{
+        text-transform: lowercase;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     .error{

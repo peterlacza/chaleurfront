@@ -21,7 +21,7 @@
         },
         methods:{
             alternativeUrl(event){
-                event.target.src = "http://laczapeter95.web.elte.hu/kepek/recipe.png";
+                event.target.src = "http://laczapeter95.web.elte.hu/kepek/dish1.png";
             }
         },
         props:{
@@ -32,7 +32,6 @@
 </script>
 
 <style scoped>
-    /* Innentől nem tudom mit csinálon  */
     .box{
         border-radius: 5px;
         padding: 0;

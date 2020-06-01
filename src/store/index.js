@@ -5,6 +5,8 @@ import VueAxios from "vue-axios";
 
 Vue.use(Vuex, VueAxios, axios);
 
+const serverUrl = "http://localhost:9090";
+
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
     let user = JSON.parse(localStorage.getItem('user'));
@@ -42,7 +44,8 @@ export const store = new Vuex.Store({
         latestRecipes:null,
         recommendedUsers:null,
         rateSuccessful:false,
-        searchResult:null
+        searchResult:null,
+        remainingNumber:null
     },
     getters: {
         mainCategories(state) {
@@ -117,6 +120,9 @@ export const store = new Vuex.Store({
         },
         searchResult(state){
             return state.searchResult;
+        },
+        remainingNumber(state){
+            return state.remainingNumber;
         }
     },
     mutations: {
@@ -164,14 +170,13 @@ export const store = new Vuex.Store({
         },
         register(state, user){
             state.registrationError = false;
-            console.log("Jó les,z :"+JSON.stringify(user))
+            console.log("Sikeres regisztráció :"+JSON.stringify(user))
         },
         registrationError(state){
-            console.log("ERRORBA LÉPEK")
             state.registrationError = true;
         },
         deleteConsumption(response){
-            console.log("sikerült kitörölni! "+response);
+            console.log("Sikeres törlés! "+response);
         },
         rateSuccessful(state){
             state.rateSuccessful = true;
@@ -189,7 +194,7 @@ export const store = new Vuex.Store({
             state.followers =  followers;
         },
         addFavourite(response){
-            console.log("Válasz: "+response);
+            console.log("Response: "+response);
         },
         setUserFavourites(state, favourites){
             state.userFavourites = favourites;
@@ -217,17 +222,20 @@ export const store = new Vuex.Store({
         },
         clearSearchHistory(state){
             state.searchResult = null
+        },
+        setRemainingNumber(state, remainingNumber){
+            state.remainingNumber = remainingNumber;
         }
     },
     actions: {
         getMainCategories({commit}) {
             axios
-                .get("http://localhost:9090/browse")
+                .get(serverUrl+"/browse")
                 .then(response => commit("getMainCategories", response));
         },
         getSubCategories({commit}, mainCategoryCode) {
             axios
-                .get(`http://localhost:9090/browse/${encodeURIComponent(mainCategoryCode)}`)
+                .get(serverUrl+`/browse/${encodeURIComponent(mainCategoryCode)}`)
                 .then(response => commit("getSubCategories", response));
         },
         getSubCategoriesWithParams({commit}, obj) {
@@ -236,49 +244,49 @@ export const store = new Vuex.Store({
                 params.append('diet', obj.dietList[diet]);
             }
             axios
-                .get(`http://localhost:9090/browse/${encodeURIComponent(obj.mainCategoryCode)}`, {params})
+                .get(serverUrl+`/browse/${encodeURIComponent(obj.mainCategoryCode)}`, {params})
                 .then(response => commit("getSubCategoriesWithParams", response));
             commit("setParamList", params);
         },
         getRecipesBySubCategory({commit}, subCategoryCode) {
             axios
-                .get(`http://localhost:9090/browse/${encodeURIComponent(subCategoryCode)}/recipes`)
+                .get(serverUrl+`/browse/${encodeURIComponent(subCategoryCode)}/recipes`)
                 .then(response => commit("getRecipesBySubCategory", response.data));
         },
         getCategoryWinner({commit}, subCategoryCode){
             axios
-                .get('http://localhost:9090/browse/categorywinner',{params: {"subCategoryCode":subCategoryCode}})
+                .get(serverUrl+'/browse/categorywinner',{params: {"subCategoryCode":subCategoryCode}})
                 .then(response => commit("setCategoryWinner", response.data));
 
         },
         getConsumptions({commit}) {
             axios
-                .get('http://localhost:9090/eat/consumptions')
+                .get(serverUrl+'/consumption/consumptions')
                 .then(response => commit("setConsumptions", response.data))
         },
         getNutrientReference({commit}) {
             axios
-                .get('http://localhost:9090/reference/getReference')
+                .get(serverUrl+'/reference/getReference')
                 .then(response => commit("setNutrientReference", response.data))
         },
         getTodayNutrientValues({commit}, date){
             axios
-                .get('http://localhost:9090/eat/nutrients',{params: {"date":date}})
+                .get(serverUrl+'/consumption/nutrients',{params: {"date":date}})
                 .then(response => commit("setTodayNutrientValues", response.data))
         },
         getRecommendation({commit}) {
             axios
-                .get('http://localhost:9090/recommend')
+                .get(serverUrl+'/recommend')
                 .then(response => commit("setRecommendedRecipes", response.data))
         },
         getUserRecipes({commit}, username){
             axios
-                .get('http://localhost:9090/recipes', {params: {"userName": username}})
+                .get(serverUrl+'/recipes', {params: {"userName": username}})
                 .then(response => commit("setUserRecipes", response.data));
         },
         deleteConsumption({commit}, id){
             axios
-                .delete('http://localhost:9090/eat/consumption', {params: {"id":id}})
+                .delete(serverUrl+'/consumption/consumption', {params: {"id":id}})
                 .then(response => commit("deleteConsumption", response.data));
         },
         rateRecipe({commit}, obj){
@@ -286,7 +294,7 @@ export const store = new Vuex.Store({
             params.append('rateValue', obj.rateValue)
             params.append('recipeId', obj.recipeId);
             axios
-                .post('http://localhost:9090/eat/rate', params)
+                .post(serverUrl+'/consumption/rate', params)
                 .then(commit("rateSuccessful"));
             },
         setActUser({commit}, actUser){
@@ -294,12 +302,12 @@ export const store = new Vuex.Store({
         },
         consumeRecipe({commit}, consumption){
             axios
-                .post('http://localhost:9090/eat/consumption', consumption)
+                .post(serverUrl+'/consumption/add', consumption)
                 .then(response => commit("response", response.data))
         },
         register( {commit}, user){
             axios
-                .post('http://localhost:9090/auth/register', user)
+                .post(serverUrl+'/auth/register', user)
                 .then(function (response) {
                     if (response.status === 200) {
                         commit("register", response.data)
@@ -310,9 +318,8 @@ export const store = new Vuex.Store({
                 });
         },
         getUserProfile( {commit}, userName){
-            console.log("username: "+userName);
             axios
-                .get('http://localhost:9090/user', {params: {"userName":userName}})
+                .get(serverUrl+'/user', {params: {"userName":userName}})
                 .then(response => commit("setUserProfile", response.data));
         },
         followUser ({commit}, userName ){
@@ -320,7 +327,7 @@ export const store = new Vuex.Store({
             params.append('userName', userName);
 
             axios
-              .post('http://localhost:9090/user/follow', params)
+              .post(serverUrl+'/user/follow', params)
               .then(commit("followUser",userName));
         },
         unfollow({commit}, userName){
@@ -328,95 +335,100 @@ export const store = new Vuex.Store({
             params.append('userName', userName);
 
             axios
-                .post('http://localhost:9090/user/unfollow', params)
+                .post(serverUrl+'/user/unfollow', params)
                 .then(commit("unfollow"));
         },
         getFollowings({commit}){
             axios
-                .get('http://localhost:9090/user/followings')
+                .get(serverUrl+'/user/followings')
                 .then(response => commit("setFollowings", response.data));
         },
         getFollowers({commit}, username){
             axios
-                .get('http://localhost:9090/user/followers', {params: {"userName":username}})
+                .get(serverUrl+'/user/followers', {params: {"userName":username}})
                 .then(response => commit("setFollowers", response.data));
         },
         addFavourite({commit}, recipeId){
             const params = new URLSearchParams();
             params.append('recipeId', recipeId);
             axios
-                .post('http://localhost:9090/recipes/favourite', params)
+                .post(serverUrl+'/recipes/favourite', params)
                 .then(response => commit("addFavourite", response.data));
         },
         getFavourites({commit}, username){
             axios
-                .get('http://localhost:9090/recipes/favourites', {params: {"userName":username}})
+                .get(serverUrl+'/recipes/favourites', {params: {"userName":username}})
                 .then(response => commit("setUserFavourites", response.data));
         },
         getActRecipe({commit}, recipeId){
             axios
-                .get('http://localhost:9090/recipes/recipe', {params: {"id":recipeId}})
+                .get(serverUrl+'/recipes/recipe', {params: {"id":recipeId}})
                 .then(response => commit("setActRecipe", response.data));
         },
         async addRecipe({commit}, recipe){
             await axios
-                .post('http://localhost:9090/recipes/upload', recipe);
+                .post(serverUrl+'/recipes/upload', recipe);
             commit("unfollow");
         },
         addRecipeImg({commit}, picture){
             axios
-                .post('http://localhost:9090/recipes/addImage', picture);
+                .post(serverUrl+'/recipes/addImage', picture);
             commit("unfollow");
         },
         addUserImage({commit}, picture){
             axios
-                .post('http://localhost:9090/user/addImage', picture);
+                .post(serverUrl+'/user/addImage', picture);
             commit("unfollow");
         },
         getFoods({commit}){
             axios
-                .get('http://localhost:9090/recipes/foods')
+                .get(serverUrl+'/recipes/foods')
                 .then(response => commit("setFoodList", response.data));
         },
         getCategoryTypes({commit}){
             axios
-                .get('http://localhost:9090/browse/categoryTypes')
+                .get(serverUrl+'/browse/categoryTypes')
                 .then(response => commit("setCategoryTypes", response.data));
         },
         getCategoryValues({commit}, categoryType){
             axios
-                .get('http://localhost:9090/browse/typevalue', {params:{"categoryType" : categoryType}})
+                .get(serverUrl+'/browse/valuesbytype', {params:{"categoryType" : categoryType}})
                 .then(response => commit("setCategoryValues", response.data));
         },
         deleteRecipe({commit}, recipeId){
             axios
-                .delete('http://localhost:9090/recipes/delete', {params:{"recipeId" : recipeId}})
+                .delete(serverUrl+'/recipes/delete', {params:{"recipeId" : recipeId}})
                 .then(commit("unfollow"));
         },
         removeFavourite({commit}, recipeId){
             axios
-                .delete('http://localhost:9090/recipes/favourite', {params:{"recipeId" : recipeId}})
+                .delete(serverUrl+'/recipes/favourite', {params:{"recipeId" : recipeId}})
                 .then(commit("unfollow"));
 
         },
         getLatests({commit}){
             axios
-                .get('http://localhost:9090/recipes/latest')
+                .get(serverUrl+'/recipes/latest')
                 .then(response => commit("setLatest", response.data));
         },
         recommendUsers({commit}){
             axios
-                .get('http://localhost:9090/recipes/recommendUsers')
+                .get(serverUrl+'/recipes/recommendUsers')
                 .then(response => commit("setRecommendedUsers", response.data));
         },
         getSearchResults( {commit}, searchValue){
-            let requestUrl = "http://localhost:9090/recipes/find?search=(name:'*"+searchValue+"*')";
+            let requestUrl = serverUrl+"/recipes/find?search=(name:'*"+searchValue+"*')";
             axios
                 .get(requestUrl)
                 .then(response => commit("setSearchResult", response.data));
         },
         clearSearchHistory({commit}){
             commit("clearSearchHistory")
+        },
+        getRemainingNumber({commit}){
+            axios
+                .get(serverUrl+'/recommend/reamining')
+                .then(response => commit("setRemainingNumber", response.data));
         }
     }
     });

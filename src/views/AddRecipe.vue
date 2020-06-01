@@ -20,7 +20,7 @@
                 </div>
                 <div class="column is-narrow">
                     <b-field label="Image">
-                        <b-upload v-model="file"  accept="image/x-png">
+                        <b-upload v-model="file" accept='image/*'>
                             <a :class="!file ? 'button is-dark is-outlined' : 'button is-success is-outlined'">
                                 <b-icon v-if="!file" icon="upload"></b-icon>
                                 <b-icon v-else icon="image"></b-icon>
@@ -207,24 +207,6 @@
         },
         methods:{
             submitRecipe(){
-                /*
-                file: null,
-                    recipeName: '',
-                    recipeDescription:'',
-                    selected: [],
-                    isLoading: true,
-                    ingredientNum : 1,
-                    recipeTagNum : 1,
-                    actCategoryType: null,
-                    selectedIngredients:['','','','','','','','','','','','',],
-                    ingredIndex: 0,
-                    mainCategoryCode:'',
-                    subCategoryCode:'',
-                    tags:[],
-                    filteredTags:this.categoryValues,
-            }
-
-             */
                 if(this.recipeName && this.selected.length > 0 && this.mainCategoryCode !== '' &&  this.subCategoryCode !== ''){
                     let formData = new FormData();
 
@@ -286,6 +268,7 @@
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
+                    this.$router.go();
                 } else{
                     this.addRecipeError();
                 }
